@@ -13,7 +13,7 @@ class UserManager(BaseUserManager):
     '''
     def create_user(self, email, password, **extra_fields):
         '''
-        create and save a user with the given email and password and extera fields.
+        create and save a user with the given email and password and extra fields.
         '''
         if not email:
             raise ValueError(_('the Email must be set.'))
@@ -42,7 +42,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
-    # is_verfied = models.BooleanField(default = False)
+    # is_verified = models.BooleanField(default = False)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -76,3 +76,4 @@ class Profile(models.Model):
 def save_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
