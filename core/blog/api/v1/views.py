@@ -1,14 +1,14 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
-from .serializers import PostSerializers
-from ...models import Post
+from .serializers import PostSerializers, CategorySerializers
+from ...models import Post, Category
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import mixins
 from rest_framework import viewsets
-
+from rest_framework.decorators import action
 # example for Function Base View
 """
 from rest_framework.decorators import api_view, permission_classes
@@ -147,6 +147,7 @@ class PostDetail(RetrieveUpdateDestroyAPIView):
 
 
 # example for ViewSet in Class Base View
+'''
 class PostViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
@@ -181,3 +182,16 @@ class PostViewSet(viewsets.ViewSet):
     
     def partial_update(self, request, pk=None):
         pass
+'''
+
+# example for ModelViewSet in Class Base View
+class PostModelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializers
+    queryset = Post.objects.filter(status=True)
+
+
+class CategoryModelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = CategorySerializers
+    queryset = Category.objects.all()
