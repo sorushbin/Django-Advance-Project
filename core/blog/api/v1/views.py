@@ -2,15 +2,15 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.response import Response
 from .serializers import PostSerializers, CategorySerializers
 from ...models import Post, Category
-from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework import mixins
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets, filters, status
 from rest_framework.decorators import action
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from . paginations import PostPagination
+
 
 # example for Function Base View
 """
@@ -192,8 +192,11 @@ class PostModelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category', 'author', 'status']
+    pagination_class = PostPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = {'category':["exact", "in"], 'author':["exact", "in"], 'status':["exact"]}
+    search_fields = ['title', 'content']
+    ordering_fields = ['published_date']
 
 class CategoryModelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
