@@ -10,7 +10,11 @@ from rest_framework_simplejwt.views import (
 app_name = 'accounts-api'
 
 urlpatterns =[
+    # registration
     path('registration/', views.RegistrationApiView.as_view(), name='registration'),
+
+    # change password
+    path('change-password/', views.ChangePasswordApiView.as_view(), name='change-password'),
 
     # Token Based Authentication
     path('token/login/', views.CustomAuthToken.as_view(), name='token-login'),
