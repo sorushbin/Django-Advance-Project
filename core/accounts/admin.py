@@ -17,7 +17,7 @@ class CustomUserAdmin(UserAdmin):
         }),
         ('Permissions',{
             'fields':(
-                'is_staff', 'is_active', 'is_superuser', 'is_verified'
+                'is_staff', 'is_active', 'is_superuser', 'is_verified',
             )
         }),
         ('Group permissions',{
@@ -34,8 +34,8 @@ class CustomUserAdmin(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'email', 'password1', 'password2', 'is_staff', 'is_verified'
-                'is_active', 'is_superuser'
+                'email', 'password1', 'password2', 'is_staff',
+                'is_active', 'is_superuser','is_verified',
             )}
         ),
     )
