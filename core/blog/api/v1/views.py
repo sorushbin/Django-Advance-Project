@@ -1,15 +1,24 @@
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+)
+
+# from rest_framework.response import Response
 from .serializers import PostSerializers, CategorySerializers
 from ...models import Post, Category
-from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework import mixins, viewsets, filters, status
-from rest_framework.decorators import action
+
+# from django.shortcuts import get_object_or_404
+# from rest_framework.views import APIView
+from rest_framework.generics import (
+    # GenericAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
+from rest_framework import viewsets, filters
+
+# from rest_framework.decorators import action
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
-from . paginations import PostPagination
+from .paginations import PostPagination
 
 
 # example for Function Base View
@@ -74,7 +83,6 @@ class PostList(APIView):
         posts = Post.objects.filter(status=True)
         serializer = self.serializer_class(posts, many=True) # serializer = PostSerializers(posts, many=True)
         return Response(serializer.data)
-    
     def post(self, request):
         """creating a new post with provided data"""
         serializer = self.serializer_class(data=request.data)
@@ -92,7 +100,6 @@ class PostDetail(APIView):
         post = get_object_or_404(Post, id=pk, status=True)
         serializer = self.serializer_class(post) # serializer = PostSerializers(post)
         return Response(serializer.data)
-    
     def put(self, request, pk):
         """ editing the post """
         post = get_object_or_404(Post, id=pk, status=True)
@@ -100,7 +107,6 @@ class PostDetail(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    
     def delete(self, request, pk):
         """ deleting the post """
         post = get_object_or_404(Post, id=pk, status=True)
@@ -108,12 +114,15 @@ class PostDetail(APIView):
         return Response("{'details': post deleted successfully}", status=status.HTTP_204_NO_CONTENT)
     '''
 
+
 # example for GenericApiView in Class Base View
 class PostList(ListCreateAPIView):
     """getting a list of posts and creating a new post"""
+
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
+
 
 '''class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     """getting a list of posts and creating a new post"""
@@ -123,34 +132,33 @@ class PostList(ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-    
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)'''
-    
+
 
 class PostDetail(RetrieveUpdateDestroyAPIView):
-    """ getting detail of post and editing plus removing it  """
+    """getting detail of post and editing plus removing it"""
+
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
 
-'''class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+
+"""class PostDetail(GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
-    
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
-    
     def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)'''
+        return self.destroy(request, *args, **kwargs)"""
 
 
 # example for ViewSet in Class Base View
-'''
+"""
 class PostViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
@@ -159,33 +167,29 @@ class PostViewSet(viewsets.ViewSet):
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)
-    
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    
     def retrieve(self, request, pk=None):
         post_object = get_object_or_404(self.queryset, pk=pk)
         serializer = self.serializer_class(post_object)
         return Response(serializer.data)
-    
     def update(self, request, pk=None):
         post_object = get_object_or_404(self.queryset, pk=pk)
         serializer = self.serializer_class(post_object, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    
     def destroy(self, request, pk=None):
         post_object = get_object_or_404(self.queryset, pk=pk)
         post_object.delete()
         return Response({'detail':'this post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-    
     def partial_update(self, request, pk=None):
         pass
-'''
+"""
+
 
 # example for ModelViewSet in Class Base View
 class PostModelViewSet(viewsets.ModelViewSet):
@@ -193,10 +197,19 @@ class PostModelViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
     pagination_class = PostPagination
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = {'category':["exact", "in"], 'author':["exact", "in"], 'status':["exact"]}
-    search_fields = ['title', 'content']
-    ordering_fields = ['published_date']
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_fields = {
+        "category": ["exact", "in"],
+        "author": ["exact", "in"],
+        "status": ["exact"],
+    }
+    search_fields = ["title", "content"]
+    ordering_fields = ["published_date"]
+
 
 class CategoryModelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]

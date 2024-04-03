@@ -8,79 +8,84 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    """ serializer class for registration user and check validate password """
+    """serializer class for registration user and check validate password"""
+
     password1 = serializers.CharField(max_length=255, write_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'password1']
+        fields = ["email", "password", "password1"]
 
     def validate(self, attrs):
-        if attrs.get('password') != attrs.get('password1'):
-            raise serializers.ValidationError({'detail':'password dose not match.'})
+        if attrs.get("password") != attrs.get("password1"):
+            raise serializers.ValidationError(
+                {"detail": "password dose not match."}
+            )
         try:
-            validate_password(attrs.get('password'))
+            validate_password(attrs.get("password"))
         except exceptions.ValidationError as e:
-            raise serializers.ValidationError({'password':list(e.messages)})
+            raise serializers.ValidationError({"password": list(e.messages)})
         return super().validate(attrs)
-    
+
     def create(self, validated_data):
-        validated_data.pop('password1', None)
+        validated_data.pop("password1", None)
         return User.objects.create_user(**validated_data)
-    
 
 
 class CustomAuthTokenSerializer(serializers.Serializer):
-    """ customize AuthTokenSerializer for replace username by email """
-    email = serializers.CharField(
-        label=_("Email"),
-        write_only=True
-    )
+    """customize AuthTokenSerializer for replace username by email"""
+
+    email = serializers.CharField(label=_("Email"), write_only=True)
     password = serializers.CharField(
         label=_("Password"),
-        style={'input_type': 'password'},
+        style={"input_type": "password"},
         trim_whitespace=False,
-        write_only=True
+        write_only=True,
     )
-    token = serializers.CharField(
-        label=_("Token"),
-        read_only=True
-    )
+    token = serializers.CharField(label=_("Token"), read_only=True)
 
     def validate(self, attrs):
-        username = attrs.get('email')
-        password = attrs.get('password')
+        username = attrs.get("email")
+        password = attrs.get("password")
 
         if username and password:
-            user = authenticate(request=self.context.get('request'),
-                                username=username, password=password)
+            user = authenticate(
+                request=self.context.get("request"),
+                username=username,
+                password=password,
+            )
 
             # The authenticate call simply returns None for is_active=False
             # users. (Assuming the default ModelBackend authentication
             # backend.)
             if not user:
-                msg = _('Unable to log in with provided credentials.')
-                raise serializers.ValidationError(msg, code='authorization')
+                msg = _("Unable to log in with provided credentials.")
+                raise serializers.ValidationError(msg, code="authorization")
             if not user.is_verified:
-                raise serializers.ValidationError({'detail':'user is not verified.'})
+                raise serializers.ValidationError(
+                    {"detail": "user is not verified."}
+                )
         else:
             msg = _('Must include "username" and "password".')
-            raise serializers.ValidationError(msg, code='authorization')
+            raise serializers.ValidationError(msg, code="authorization")
 
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """ customize TokenObtainPairView for get email and id for user in jwt create """
+    """customize TokenObtainPairView for get email and id for user in jwt create"""
+
     def validate(self, attrs):
         validated_data = super().validate(attrs)
         if not self.user.is_verified:
-                raise serializers.ValidationError({'detail':'user is not verified.'})
-        validated_data['email'] = self.user.email
-        validated_data['user_id'] = self.user.id
+            raise serializers.ValidationError(
+                {"detail": "user is not verified."}
+            )
+        validated_data["email"] = self.user.email
+        validated_data["user_id"] = self.user.id
         return validated_data
-    
+
 
 class ChangePasswordSerializer(serializers.Serializer):
 
@@ -89,35 +94,50 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password1 = serializers.CharField(required=True)
 
     def validate(self, attrs):
-        if attrs.get('new_password') != attrs.get('new_password1'):
-            raise serializers.ValidationError({'detail':'New password dose not match.'})
+        if attrs.get("new_password") != attrs.get("new_password1"):
+            raise serializers.ValidationError(
+                {"detail": "New password dose not match."}
+            )
         try:
-            validate_password(attrs.get('new_password'))
+            validate_password(attrs.get("new_password"))
         except exceptions.ValidationError as e:
-            raise serializers.ValidationError({'new_password':list(e.messages)})
+            raise serializers.ValidationError(
+                {"new_password": list(e.messages)}
+            )
         return super().validate(attrs)
-    
+
 
 class ProfileSerializer(serializers.ModelSerializer):
-   """ serializer for profile  model """
-   email = serializers.CharField(source='user.email', read_only=True)
-   
-   class Meta:
-       model = Profile
-       fields = ['id', 'email','first_name', 'last_name', 'image', 'description']
-       
+    """serializer for profile  model"""
 
-   
+    email = serializers.CharField(source="user.email", read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "image",
+            "description",
+        ]
+
+
 class ActivationResendSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
     def validate(self, attrs):
-        email = attrs.get('email')
+        email = attrs.get("email")
         try:
             user_obj = User.objects.get(email=email)
         except user_obj.DoesNotExist:
-            raise serializers.ValidationError({'details':'User dose not exist.'})
+            raise serializers.ValidationError(
+                {"details": "User dose not exist."}
+            )
         if user_obj.is_verified:
-            raise serializers.ValidationError({'details':'This account is already activated and verified.'})
-        attrs['user'] = user_obj
+            raise serializers.ValidationError(
+                {"details": "This account is already activated and verified."}
+            )
+        attrs["user"] = user_obj
         return super().validate(attrs)
