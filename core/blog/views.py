@@ -11,10 +11,9 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .forms import PostForm
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-
+from .forms import PostForm
 from .models import Post
 
 # Create your views here.

@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from ...models import Post, Category
 from accounts.models import Profile
+from ...models import Post, Category
 
 
 class CategorySerializers(serializers.ModelSerializer):
