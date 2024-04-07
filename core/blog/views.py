@@ -59,7 +59,7 @@ class PostListView(ListView):
         return qs.filter(status=True)
 
 
-class PostDetailView(DetailView):
+class PostDetailView( LoginRequiredMixin ,DetailView):
     model = Post
 
 
