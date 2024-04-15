@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from ...models import User, Profile
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
     """serializer class for registration user and check validate password"""
 
@@ -17,9 +18,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs.get("password") != attrs.get("password1"):
-            raise serializers.ValidationError(
-                {"detail": "password dose not match."}
-            )
+            raise serializers.ValidationError({"detail": "password dose not match."})
         try:
             validate_password(attrs.get("password"))
         except exceptions.ValidationError as e:
@@ -61,9 +60,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
                 msg = _("Unable to log in with provided credentials.")
                 raise serializers.ValidationError(msg, code="authorization")
             if not user.is_verified:
-                raise serializers.ValidationError(
-                    {"detail": "user is not verified."}
-                )
+                raise serializers.ValidationError({"detail": "user is not verified."})
         else:
             msg = _('Must include "username" and "password".')
             raise serializers.ValidationError(msg, code="authorization")
@@ -78,9 +75,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         validated_data = super().validate(attrs)
         if not self.user.is_verified:
-            raise serializers.ValidationError(
-                {"detail": "user is not verified."}
-            )
+            raise serializers.ValidationError({"detail": "user is not verified."})
         validated_data["email"] = self.user.email
         validated_data["user_id"] = self.user.id
         return validated_data
@@ -100,9 +95,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         try:
             validate_password(attrs.get("new_password"))
         except exceptions.ValidationError as e:
-            raise serializers.ValidationError(
-                {"new_password": list(e.messages)}
-            )
+            raise serializers.ValidationError({"new_password": list(e.messages)})
         return super().validate(attrs)
 
 
@@ -131,9 +124,7 @@ class ActivationResendSerializer(serializers.Serializer):
         try:
             user_obj = User.objects.get(email=email)
         except user_obj.DoesNotExist:
-            raise serializers.ValidationError(
-                {"details": "User dose not exist."}
-            )
+            raise serializers.ValidationError({"details": "User dose not exist."})
         if user_obj.is_verified:
             raise serializers.ValidationError(
                 {"details": "This account is already activated and verified."}
