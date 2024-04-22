@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from faker import Faker
-import random
+import random.
 from datetime import datetime
 from accounts.models import User, Profile
 from blog.models import Category, Post
