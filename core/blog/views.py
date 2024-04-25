@@ -58,6 +58,8 @@ class PostListView(ListView):
         qs = super().get_queryset()
         return qs.filter(status=True)
 
+class PostListApiView(TemplateView):
+    template_name = "blog/post-api.html"
 
 class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post

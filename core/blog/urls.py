@@ -13,6 +13,7 @@ urlpatterns = [
         name="redirect-to-varzesh",
     ),
     path("post/", views.PostListView.as_view(), name="home-blog"),
+    path("post/api/", views.PostListApiView.as_view(), name="home-blog-api"),
     path(
         "home-blog/<int:pk>/",
         views.PostDetailView.as_view(),
