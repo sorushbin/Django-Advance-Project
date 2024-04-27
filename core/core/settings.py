@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "blog",
     "accounts",
     "corsheaders",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -167,3 +168,6 @@ EMAIL_HOST_PASSWORD = ""
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# CELERY Configs
+CELERY_BROKER_URL = "redis://redis:6379/1"
