@@ -27,7 +27,10 @@ SECRET_KEY = config("SECRET_KET", default="test")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool, default=True)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
@@ -48,8 +51,7 @@ INSTALLED_APPS = [
     "blog",
     "accounts",
     "corsheaders",
-   'django_celery_beat',
-   
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -173,14 +175,14 @@ CORS_ALLOW_ALL_ORIGINS = True
 # CELERY Configs
 CELERY_BROKER_URL = "redis://redis:6379/1"
 
-#Cache configs
+# Cache configs
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://redis:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        },
     }
 }
 
