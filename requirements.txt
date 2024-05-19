@@ -10,9 +10,10 @@ django-filter
 drf-yasg[validation]
 djangorestframework-simplejwt
 django-cors-headers
+requests
 
 # deployment modules
-
+gunicorn
 
 # email third party modules 
 django-mail-templated
@@ -28,3 +29,4 @@ faker
 celery
 redis
 django-redis
+django-celery-beat

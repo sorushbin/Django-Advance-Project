@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_KET", default="test")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool, default=True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
 
 
 # Application definition
@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "blog",
     "accounts",
     "corsheaders",
-    "django_celery_beat",
+   'django_celery_beat',
+   
 ]
 
 MIDDLEWARE = [
@@ -182,3 +183,5 @@ CACHES = {
         }
     }
 }
+
+broker_connection_retry_on_startup = True
